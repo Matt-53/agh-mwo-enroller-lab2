@@ -2,6 +2,7 @@ package com.company.enroller.persistence;
 
 import com.company.enroller.model.Participant;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,30 @@ public class ParticipantService {
 	public Collection<Participant> getAll() {
 		return connector.getSession().createCriteria(Participant.class).list();
 	}
+
+	public Collection<Participant> getAllString(String sortBy, String sortOrder, String searchKey) {
+		String hql = "FROM Participant WHERE login LIKE :key ";
+		if (sortBy.equals("login")) {
+			hql += "ORDER BY login";
+			if (sortOrder.equals("ASC") || sortOrder.equals("DESC")) {
+				hql += " " + sortOrder;
+			}
+		}
+
+		//Cała fraza z setParameter zostaje wstrzyknięta do parametru 'key' z zapytania hqlowego powyżej (hql jest oparty o sql)
+		Query query = connector.getSession().createQuery(hql);
+			query.setParameter("key", "%" + searchKey + "%");
+		return query.list();
+
+		//http://localhost:8080/participants?sortBy=login&sortOrder=DESC
+		//sortBy = "login";
+		//sortOrder = "DESC";
+
+		//http://localhost:8080/participants?sortBy=login&sortOrder=ASC
+
+		//return connector.getSession().createCriteria(Participant.class).list();
+	}
+
 
 	public Participant findByLogin(String login) {
 		return connector.getSession().get(Participant.class, login);

@@ -17,9 +17,13 @@ public class ParticipantRestController {
 	@Autowired
 	ParticipantService participantService;
 
+	//Zmiana zwykłej metody getAll na możliwość sortowania poprzez dodanie parametrów po 'getParticipants' jako @RequestParam kolejny
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public ResponseEntity<?> getParticipants() {
-		Collection<Participant> participants = participantService.getAll();
+	public ResponseEntity<?> getParticipants(@RequestParam(value = "sortBy", defaultValue = "") String sortBy,
+											 @RequestParam(value = "sortOrder", defaultValue = "") String sortOrder,
+											 @RequestParam(value = "key", defaultValue = "") String searchKey) {
+
+		Collection<Participant> participants = participantService.getAllString(sortBy, sortOrder, searchKey);
 		return new ResponseEntity<Collection<Participant>>(participants, HttpStatus.OK);
 	}
 
@@ -60,7 +64,8 @@ public class ParticipantRestController {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
 		}
 		participant.setPassword(updatedParticipant.getPassword());
-		participantService.update(participant);
+		//updatedParticipant.setLogin(login);
+		participantService.update(updatedParticipant);
 		return new ResponseEntity<Participant>(HttpStatus.OK);
 	}
 
