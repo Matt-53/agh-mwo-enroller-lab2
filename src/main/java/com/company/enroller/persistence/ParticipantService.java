@@ -22,7 +22,7 @@ public class ParticipantService {
 	}
 
 	public Collection<Participant> getAllString(String sortBy, String sortOrder, String searchKey) {
-		String hql = "FROM Participant WHERE login LIKE :key ";
+		String hql = "FROM Participant WHERE login LIKE :key";
 		if (sortBy.equals("login")) {
 			hql += "ORDER BY login";
 			if (sortOrder.equals("ASC") || sortOrder.equals("DESC")) {
